@@ -55,7 +55,7 @@ export function HistoryChart({ data }: HistoryChartProps) {
                     <Tooltip
                         contentStyle={{ backgroundColor: '#1f2937', borderColor: '#374151', color: '#f3f4f6' }}
                         itemStyle={{ color: '#e5e7eb' }}
-                        formatter={(value: number) => [`${value.toFixed(2)} VES`, '']}
+                        formatter={(value: number | undefined) => value !== undefined ? [`${value.toFixed(2)} VES`, ''] : ['', '']}
                     />
                     <Legend />
                     <Line

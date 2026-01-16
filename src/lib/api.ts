@@ -2,7 +2,6 @@
 export interface ExchangeRates {
   bcv: number;
   binance: number;
-  euro_bcv: number;
 }
 
 interface DolarApiRate {
@@ -26,14 +25,10 @@ export async function getRates(): Promise<ExchangeRates | null> {
     const oficialRate = data.find(d => d.fuente === 'oficial')?.promedio || 0;
     const paraleloRate = data.find(d => d.fuente === 'paralelo')?.promedio || 0;
 
-    // Euro is not currently available in this endpoint. 
-    // We will leave it as 0 or try to estimate/fetch elsewhere in future iterations.
-    const euroRate = 0;
 
     return {
       bcv: oficialRate,
-      binance: paraleloRate, // Using Paralelo as proxy for Binance
-      euro_bcv: euroRate
+      binance: paraleloRate
     };
   } catch (error) {
     console.error("API Error", error);
