@@ -62,7 +62,7 @@ export default function Home() {
             Monitor Dólar
           </h1>
           <p className="text-gray-400 text-sm">
-            Tasas actualizadas al momento para Venezuela
+            Tasas actualizadas.
           </p>
           <div className="text-xs text-gray-500 mt-1 capitalize">
             {currentDate}
