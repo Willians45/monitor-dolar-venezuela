@@ -137,9 +137,6 @@ export default function Home() {
         )}
 
         {/* Footer */}
-        <footer className="py-6 text-center text-xs text-gray-600">
-          <p>Datos referenciales. No representa consejo financiero.</p>
-        </footer>
 
       </div>
     </main>
