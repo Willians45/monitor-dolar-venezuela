@@ -10,12 +10,20 @@ import clsx from "clsx";
 import { Converter } from "@/components/Converter";
 import { PullToRefresh } from "@/components/PullToRefresh";
 
+import { StatusBar, Style } from '@capacitor/status-bar';
+import { Capacitor } from '@capacitor/core';
+
 export default function Home() {
   const { currentRates, history, loading, error, refetch } = useRates();
   const [activeTab, setActiveTab] = useState<'monitor' | 'history'>('monitor');
   const [currentDate, setCurrentDate] = useState<string>('');
 
   useEffect(() => {
+    // Immersive UI handling for Android
+    if (Capacitor.isNativePlatform()) {
+      StatusBar.setOverlaysWebView({ overlay: true });
+      StatusBar.setStyle({ style: Style.Dark });
+    }
     setCurrentDate(new Date().toLocaleDateString('es-VE', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }));
 
     if ('serviceWorker' in navigator) {
@@ -67,10 +75,15 @@ export default function Home() {
           <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-purple-600/20 rounded-full blur-[120px]" />
         </div>
 
-        <div className="relative z-10 max-w-lg mx-auto p-4 flex flex-col gap-6">
+        <div className="relative z-10 max-w-lg mx-auto px-4 flex flex-col gap-6" style={{ 
+          paddingTop: 'calc(1rem + env(safe-area-inset-top))',
+          paddingBottom: 'env(safe-area-inset-bottom)',
+          paddingLeft: 'calc(1rem + env(safe-area-inset-left))',
+          paddingRight: 'calc(1rem + env(safe-area-inset-right))'
+        }}>
 
           {/* Header */}
-          <header className="flex justify-between items-start pt-6 pb-2">
+          <header className="flex justify-between items-start pt-2 pb-2">
             <div className="flex flex-col gap-2">
               <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400">
                 Monitor Dólar

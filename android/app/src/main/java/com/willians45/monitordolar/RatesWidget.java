@@ -34,8 +34,11 @@ public class RatesWidget extends AppWidgetProvider {
         PendingIntent refreshPendingIntent = PendingIntent.getBroadcast(context, appWidgetId, refreshIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         views.setOnClickPendingIntent(R.id.widget_refresh, refreshPendingIntent);
 
-        // Placeholder data
-        views.setTextViewText(R.id.widget_update_time, "Actualizado: " + new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date()));
+        // Setting some data (Placeholder values, in a real app these come from SharedPrefs)
+        views.setTextViewText(R.id.rate_usd_bcv, "36.85");
+        views.setTextViewText(R.id.rate_eur_bcv, "40.12");
+        views.setTextViewText(R.id.rate_binance, "38.50");
+        views.setTextViewText(R.id.widget_update_time, "Act: " + new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date()));
         
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
