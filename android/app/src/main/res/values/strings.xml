@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Monitor Dolar</string>
+    <string name="title_activity_main">Monitor Dolar</string>
+    <string name="package_name">com.willians45.monitordolar</string>
+    <string name="custom_url_scheme">com.willians45.monitordolar</string>
+</resources>
