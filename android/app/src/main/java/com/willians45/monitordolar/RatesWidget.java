@@ -61,42 +61,60 @@ public class RatesWidget extends AppWidgetProvider {
                 // Fetch Dolares
                 String dolarJson = fetchUrl("https://ve.dolarapi.com/v1/dolares");
                 if (dolarJson != null) {
-                    JSONArray dolares = new JSONArray(dolarJson);
-                    for (int i = 0; i < dolares.length(); i++) {
-                        JSONObject obj = dolares.getJSONObject(i);
-                        String fuente = obj.optString("fuente");
-                        double promedio = obj.optDouble("promedio", 0);
-                        if ("oficial".equals(fuente)) {
-                            bcvStr = String.format(Locale.US, "%.2f", promedio);
-                        } else if ("paralelo".equals(fuente)) {
-                            binanceStr = String.format(Locale.US, "%.2f", promedio);
+                    try {
+                        JSONArray dolares = new JSONArray(dolarJson);
+                        for (int i = 0; i < dolares.length(); i++) {
+                            JSONObject obj = dolares.getJSONObject(i);
+                            String fuente = obj.optString("fuente");
+                            double promedio = obj.optDouble("promedio", 0);
+                            if ("oficial".equals(fuente)) {
+                                bcvStr = String.format(Locale.US, "%.2f", promedio);
+                            } else if ("paralelo".equals(fuente)) {
+                                binanceStr = String.format(Locale.US, "%.2f", promedio);
+                            }
                         }
+                    } catch (Exception e) {
+                        bcvStr = "ErrJSON";
                     }
+                } else {
+                    bcvStr = "ErrNet";
+                    binanceStr = "ErrNet";
                 }
 
                 // Fetch Euros
                 String euroJson = fetchUrl("https://ve.dolarapi.com/v1/euros");
                 if (euroJson != null) {
-                    JSONArray euros = new JSONArray(euroJson);
-                    for (int i = 0; i < euros.length(); i++) {
-                        JSONObject obj = euros.getJSONObject(i);
-                        if ("oficial".equals(obj.optString("fuente"))) {
-                            euroStr = String.format(Locale.US, "%.2f", obj.optDouble("promedio", 0));
-                            break;
+                    try {
+                        JSONArray euros = new JSONArray(euroJson);
+                        for (int i = 0; i < euros.length(); i++) {
+                            JSONObject obj = euros.getJSONObject(i);
+                            if ("oficial".equals(obj.optString("fuente"))) {
+                                euroStr = String.format(Locale.US, "%.2f", obj.optDouble("promedio", 0));
+                                break;
+                            }
                         }
+                    } catch (Exception e) {
+                        euroStr = "ErrJSON";
                     }
+                } else {
+                    euroStr = "ErrNet";
                 }
 
                 // Update UI on background thread (RemoteViews allows this)
                 views.setTextViewText(R.id.rate_usd_bcv, bcvStr);
                 views.setTextViewText(R.id.rate_binance, binanceStr);
                 views.setTextViewText(R.id.rate_eur_bcv, euroStr);
-                views.setTextViewText(R.id.widget_update_time, "Act: " + new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date()));
+                
+                if (bcvStr.startsWith("Err") || euroStr.startsWith("Err")) {
+                    views.setTextViewText(R.id.widget_update_time, "Fallo conexión " + new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date()));
+                } else {
+                    views.setTextViewText(R.id.widget_update_time, "Act: " + new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date()));
+                }
                 
                 appWidgetManager.updateAppWidget(appWidgetId, views);
             } catch (Exception e) {
                 e.printStackTrace();
-                views.setTextViewText(R.id.widget_update_time, "Error al actualizar");
+                views.setTextViewText(R.id.widget_update_time, "Ex: " + e.getMessage());
                 appWidgetManager.updateAppWidget(appWidgetId, views);
             }
         });
@@ -107,8 +125,10 @@ public class RatesWidget extends AppWidgetProvider {
             URL url = new URL(urlString);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
-            connection.setConnectTimeout(5000);
-            connection.setReadTimeout(5000);
+            connection.setConnectTimeout(8000);
+            connection.setReadTimeout(8000);
+            connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)");
+            connection.setRequestProperty("Accept", "application/json");
             
             if (connection.getResponseCode() == 200) {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -119,6 +139,8 @@ public class RatesWidget extends AppWidgetProvider {
                 }
                 reader.close();
                 return response.toString();
+            } else {
+                System.out.println("HTTP Error: " + connection.getResponseCode() + " for " + urlString);
             }
         } catch (Exception e) {
             e.printStackTrace();
