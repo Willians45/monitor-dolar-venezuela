@@ -62,38 +62,16 @@ public class RatesWidget extends AppWidgetProvider {
 
                 boolean success = false;
                 
-                // Fetch Dolares
-                String dolarJson = fetchUrl("https://ve.dolarapi.com/v1/dolares");
-                if (dolarJson != null) {
+                // Fetch all rates from Vercel API
+                String jsonString = fetchUrl("https://monitor-dolar-venezuela-yxsa.vercel.app/api/rates");
+                if (jsonString != null) {
                     try {
-                        JSONArray dolares = new JSONArray(dolarJson);
-                        for (int i = 0; i < dolares.length(); i++) {
-                            JSONObject obj = dolares.getJSONObject(i);
-                            String fuente = obj.optString("fuente");
-                            double promedio = obj.optDouble("promedio", 0);
-                            if ("oficial".equals(fuente)) {
-                                bcvStr = String.format(Locale.US, "%.2f", promedio);
-                                success = true;
-                            } else if ("paralelo".equals(fuente)) {
-                                binanceStr = String.format(Locale.US, "%.2f", promedio);
-                            }
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                // Fetch Euros
-                String euroJson = fetchUrl("https://ve.dolarapi.com/v1/euros");
-                if (euroJson != null) {
-                    try {
-                        JSONArray euros = new JSONArray(euroJson);
-                        for (int i = 0; i < euros.length(); i++) {
-                            JSONObject obj = euros.getJSONObject(i);
-                            if ("oficial".equals(obj.optString("fuente"))) {
-                                euroStr = String.format(Locale.US, "%.2f", obj.optDouble("promedio", 0));
-                                break;
-                            }
+                        JSONObject json = new JSONObject(jsonString);
+                        if (!json.has("error")) {
+                            bcvStr = String.format(Locale.US, "%.2f", json.optDouble("bcv", 0));
+                            binanceStr = String.format(Locale.US, "%.2f", json.optDouble("binance", 0));
+                            euroStr = String.format(Locale.US, "%.2f", json.optDouble("euroBcv", 0));
+                            success = true;
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
