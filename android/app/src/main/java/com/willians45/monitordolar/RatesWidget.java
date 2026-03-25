@@ -54,10 +54,14 @@ public class RatesWidget extends AppWidgetProvider {
         // Fetch Data Async
         executor.execute(() -> {
             try {
-                String bcvStr = "--";
-                String binanceStr = "--";
-                String euroStr = "--";
+                android.content.SharedPreferences prefs = context.getSharedPreferences("WidgetPrefs", Context.MODE_PRIVATE);
+                String bcvStr = prefs.getString("last_bcv", "--");
+                String binanceStr = prefs.getString("last_binance", "--");
+                String euroStr = prefs.getString("last_euro", "--");
+                String lastTime = prefs.getString("last_time", "--:--");
 
+                boolean success = false;
+                
                 // Fetch Dolares
                 String dolarJson = fetchUrl("https://ve.dolarapi.com/v1/dolares");
                 if (dolarJson != null) {
@@ -69,16 +73,14 @@ public class RatesWidget extends AppWidgetProvider {
                             double promedio = obj.optDouble("promedio", 0);
                             if ("oficial".equals(fuente)) {
                                 bcvStr = String.format(Locale.US, "%.2f", promedio);
+                                success = true;
                             } else if ("paralelo".equals(fuente)) {
                                 binanceStr = String.format(Locale.US, "%.2f", promedio);
                             }
                         }
                     } catch (Exception e) {
-                        bcvStr = "ErrJSON";
+                        e.printStackTrace();
                     }
-                } else {
-                    bcvStr = "ErrNet";
-                    binanceStr = "ErrNet";
                 }
 
                 // Fetch Euros
@@ -94,10 +96,19 @@ public class RatesWidget extends AppWidgetProvider {
                             }
                         }
                     } catch (Exception e) {
-                        euroStr = "ErrJSON";
+                        e.printStackTrace();
                     }
-                } else {
-                    euroStr = "ErrNet";
+                }
+
+                if (success) {
+                    lastTime = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date());
+                    // Save to cache
+                    prefs.edit()
+                        .putString("last_bcv", bcvStr)
+                        .putString("last_binance", binanceStr)
+                        .putString("last_euro", euroStr)
+                        .putString("last_time", lastTime)
+                        .apply();
                 }
 
                 // Update UI on background thread (RemoteViews allows this)
@@ -105,17 +116,12 @@ public class RatesWidget extends AppWidgetProvider {
                 views.setTextViewText(R.id.rate_binance, binanceStr);
                 views.setTextViewText(R.id.rate_eur_bcv, euroStr);
                 
-                if (bcvStr.startsWith("Err") || euroStr.startsWith("Err")) {
-                    views.setTextViewText(R.id.widget_update_time, "Fallo conexión " + new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date()));
-                } else {
-                    views.setTextViewText(R.id.widget_update_time, "Act: " + new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date()));
-                }
+                // Show if it's fresh or from cache
+                views.setTextViewText(R.id.widget_update_time, (success ? "Act: " : "Cache: ") + lastTime);
                 
                 appWidgetManager.updateAppWidget(appWidgetId, views);
             } catch (Exception e) {
                 e.printStackTrace();
-                views.setTextViewText(R.id.widget_update_time, "Ex: " + e.getMessage());
-                appWidgetManager.updateAppWidget(appWidgetId, views);
             }
         });
     }
