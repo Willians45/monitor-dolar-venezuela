@@ -63,7 +63,7 @@ public class RatesWidget extends AppWidgetProvider {
                 String lastTime = prefs.getString("last_time", "--:--");
 
                 // Fetch all rates from Vercel API
-                String jsonString = fetchUrl("https://monitor-dolar-venezuela-yxsa.vercel.app/api/rates");
+                String jsonString = fetchUrl("https://monitor-dolar-venezuela.vercel.app/api/rates");
                 if (jsonString != null && !jsonString.startsWith("ERROR_HTTP")) {
                     try {
                         JSONObject json = new JSONObject(jsonString);
