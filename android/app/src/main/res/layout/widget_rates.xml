@@ -1,67 +1,128 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="8dp"
+    android:padding="12dp"
+    android:orientation="vertical"
     android:background="@drawable/widget_background">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_centerInParent="true">
+        android:layout_marginBottom="8dp">
 
         <TextView
             android:id="@+id/widget_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Monitor Dólar"
-            android:textColor="#FFFFFF"
+            android:text="Tasas de Cambio"
+            android:textColor="#88FFFFFF"
             android:textSize="12sp"
-            android:textStyle="bold"
-            android:layout_gravity="center_horizontal" />
+            android:textStyle="bold" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_marginTop="4dp">
+        <ImageView
+            android:id="@+id/widget_refresh"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_alignParentEnd="true"
+            android:src="@android:drawable/stat_notify_sync"
+            android:tint="#88FFFFFF" />
+    </RelativeLayout>
 
-            <TextView
-                android:id="@+id/rate_bcv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="BCV: 36.32"
-                android:textColor="#60a5fa"
-                android:textSize="14sp"
-                android:textStyle="bold" />
+    <!-- USD BCV Row -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="4dp">
 
-            <View
-                android:layout_width="1dp"
-                android:layout_height="16dp"
-                android:background="#33FFFFFF"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp" />
-
-            <TextView
-                android:id="@+id/rate_binance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="USDT: 38.50"
-                android:textColor="#facc15"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-        
         <TextView
-            android:id="@+id/widget_update_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Actualizando..."
-            android:textColor="#88FFFFFF"
-            android:textSize="10sp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="2dp" />
-    </LinearLayout>
-</RelativeLayout>
+            android:text="Dólar BCV"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/rate_usd_bcv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:text="36.32"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="#22FFFFFF"
+        android:layout_marginVertical="4dp" />
+
+    <!-- EUR BCV Row -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="4dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Euro BCV"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/rate_eur_bcv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:text="39.50"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="#22FFFFFF"
+        android:layout_marginVertical="4dp" />
+
+    <!-- Binance USDT Row -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="4dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Binance USDT"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/rate_binance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:text="38.50"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/widget_update_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="8dp"
+        android:text="Actualizado: --:--"
+        android:textColor="#44FFFFFF"
+        android:textSize="10sp" />
+</LinearLayout>
