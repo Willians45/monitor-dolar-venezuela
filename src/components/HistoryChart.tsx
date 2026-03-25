@@ -32,11 +32,11 @@ export function HistoryChart({ data }: HistoryChartProps) {
     }
 
     return (
-        <div className="w-full h-[300px] p-4 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm">
-            <h3 className="text-sm font-medium text-gray-400 mb-4 uppercase tracking-wider">Historial Diferencial</h3>
+        <div className="w-full h-[300px] p-4 bg-black/5 dark:bg-white/5 rounded-2xl border border-black/5 dark:border-white/10 backdrop-blur-sm">
+            <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-4 uppercase tracking-wider">Historial Diferencial</h3>
             <ResponsiveContainer width="100%" height="85%">
                 <LineChart data={chartData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" vertical={false} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#88888830" vertical={false} />
                     <XAxis
                         dataKey="date"
                         stroke="#9ca3af"
