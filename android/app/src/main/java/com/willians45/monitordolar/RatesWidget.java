@@ -53,6 +53,8 @@ public class RatesWidget extends AppWidgetProvider {
 
         // Fetch Data Async
         executor.execute(() -> {
+            boolean success = false;
+            String debugMsg = "Ok";
             try {
                 android.content.SharedPreferences prefs = context.getSharedPreferences("WidgetPrefs", Context.MODE_PRIVATE);
                 String bcvStr = prefs.getString("last_bcv", "--");
@@ -60,11 +62,9 @@ public class RatesWidget extends AppWidgetProvider {
                 String euroStr = prefs.getString("last_euro", "--");
                 String lastTime = prefs.getString("last_time", "--:--");
 
-                boolean success = false;
-                
                 // Fetch all rates from Vercel API
                 String jsonString = fetchUrl("https://monitor-dolar-venezuela-yxsa.vercel.app/api/rates");
-                if (jsonString != null) {
+                if (jsonString != null && !jsonString.startsWith("ERROR_HTTP")) {
                     try {
                         JSONObject json = new JSONObject(jsonString);
                         if (!json.has("error")) {
@@ -72,10 +72,14 @@ public class RatesWidget extends AppWidgetProvider {
                             binanceStr = String.format(Locale.US, "%.2f", json.optDouble("binance", 0));
                             euroStr = String.format(Locale.US, "%.2f", json.optDouble("euroBcv", 0));
                             success = true;
+                        } else {
+                            debugMsg = "JSON_ERR_KEY";
                         }
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        debugMsg = "PARSE: " + e.getMessage();
                     }
+                } else {
+                    debugMsg = (jsonString != null) ? jsonString : "FETCH_NULL";
                 }
 
                 if (success) {
@@ -95,11 +99,12 @@ public class RatesWidget extends AppWidgetProvider {
                 views.setTextViewText(R.id.rate_eur_bcv, euroStr);
                 
                 // Show if it's fresh or from cache
-                views.setTextViewText(R.id.widget_update_time, (success ? "Act: " : "Cache: ") + lastTime);
+                views.setTextViewText(R.id.widget_update_time, (success ? "Act: " : "Err: " + debugMsg + " | Cache: ") + lastTime);
                 
                 appWidgetManager.updateAppWidget(appWidgetId, views);
             } catch (Exception e) {
-                e.printStackTrace();
+                views.setTextViewText(R.id.widget_update_time, "Crash: " + e.getMessage());
+                appWidgetManager.updateAppWidget(appWidgetId, views);
             }
         });
     }
@@ -114,7 +119,8 @@ public class RatesWidget extends AppWidgetProvider {
             connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)");
             connection.setRequestProperty("Accept", "application/json");
             
-            if (connection.getResponseCode() == 200) {
+            int responseCode = connection.getResponseCode();
+            if (responseCode == 200) {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 StringBuilder response = new StringBuilder();
                 String line;
@@ -124,11 +130,10 @@ public class RatesWidget extends AppWidgetProvider {
                 reader.close();
                 return response.toString();
             } else {
-                System.out.println("HTTP Error: " + connection.getResponseCode() + " for " + urlString);
+                return "ERROR_HTTP_" + responseCode;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            return "ERROR_HTTP_EX: " + e.getMessage();
         }
-        return null;
     }
 }
