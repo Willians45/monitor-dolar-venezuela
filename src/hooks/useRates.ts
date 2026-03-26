@@ -2,6 +2,9 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { getRates, ExchangeRates } from '@/lib/api';
+import { registerPlugin, Capacitor } from '@capacitor/core';
+
+const WidgetSync = registerPlugin<any>('WidgetSync');
 
 export interface HistoryEntry {
     date: string;
@@ -30,6 +33,20 @@ export function useRates() {
                 }
 
                 setCurrentRates(rates);
+
+                if (Capacitor.isNativePlatform()) {
+                    try {
+                        const time = new Date().toLocaleTimeString('es-VE', { hour: '2-digit', minute:'2-digit' });
+                        WidgetSync.syncRates({
+                            bcv: rates.bcv.toFixed(2),
+                            binance: rates.binance.toFixed(2),
+                            euro: rates.euroBcv.toFixed(2),
+                            time: time
+                        });
+                    } catch (e) {
+                        console.error("WidgetSync error:", e);
+                    }
+                }
 
                 const todayStr = new Date().toLocaleDateString('es-VE');
                 const storedHistory = localStorage.getItem('rate_history');
