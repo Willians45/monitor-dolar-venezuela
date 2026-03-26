@@ -37,13 +37,6 @@ public class RatesWidget extends AppWidgetProvider {
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
         views.setOnClickPendingIntent(R.id.widget_title, pendingIntent);
 
-        // Refresh Intent is optional now, but let's keep it to manually re-read the cache if needed
-        Intent refreshIntent = new Intent(context, RatesWidget.class);
-        refreshIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-        refreshIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, new int[]{appWidgetId});
-        PendingIntent refreshPendingIntent = PendingIntent.getBroadcast(context, appWidgetId, refreshIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-        views.setOnClickPendingIntent(R.id.widget_refresh, refreshPendingIntent);
-
         // Read purely from cache (which the App populates)
         android.content.SharedPreferences prefs = context.getSharedPreferences("WidgetPrefs", Context.MODE_PRIVATE);
         String bcvStr = prefs.getString("last_bcv", "--");
